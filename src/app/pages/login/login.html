@@ -1,0 +1,39 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <h1>🎵 MusicApp</h1>
+      <p>Tu música, tu mundo</p>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        placeholder="user@music.com"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="••••••"
+      />
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button class="btn-login" (click)="onLogin()">
+      Iniciar Sesión
+    </button>
+
+    <p class="register-link">
+      ¿No tienes cuenta?
+      <span (click)="goToRegister()">Regístrate aquí</span>
+    </p>
+
+    <p class="hint">Usuario: user@music.com | Contraseña: 123456</p>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="detail-container">
+  <header class="header">
+    <button class="btn-back" (click)="goBack()">← Volver</button>
+  </header>
+
+  <div class="playlist-hero" *ngIf="playlist">
+    <img [src]="playlist.coverUrl" [alt]="playlist.name" />
+    <div class="playlist-info">
+      <span>PLAYLIST</span>
+      <h1>{{ playlist.name }}</h1>
+      <p>{{ playlist.description }}</p>
+      <span class="count">{{ playlist.songs.length }} canciones</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-add" (click)="showForm = !showForm">
+      + Agregar Canción
+    </button>
+  </div>
+
+  <div class="add-form" *ngIf="showForm">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Buscar canción o artista..."
+      (input)="searchSongs()"
+    />
+
+    <div class="search-results" *ngIf="searchResults.length > 0">
+      <div
+        class="search-item"
+        *ngFor="let result of searchResults"
+        (click)="addSongFromSearch(result)"
+      >
+        <img [src]="result.album.cover_small" [alt]="result.title" />
+        <div class="search-info">
+          <span class="search-title">{{ result.title }}</span>
+          <span class="search-artist">{{ result.artist.name }}</span>
+        </div>
+        <span class="search-duration">{{ formatDuration(result.duration) }}</span>
+      </div>
+    </div>
+
+    <p class="searching" *ngIf="isSearching">Buscando...</p>
+  </div>
+
+  <div class="songs-list" *ngIf="playlist">
+    <app-song-item
+      *ngFor="let song of playlist.songs; let i = index"
+      [song]="song"
+      [index]="i + 1"
+      [isPlaying]="isPlaying && currentSong?.id === song.id"
+      (onPlay)="playSong($event)"
+      (onDelete)="deleteSong($event)"
+    ></app-song-item>
+  </div>
+
+  <app-player
+    *ngIf="currentSong"
+    [song]="currentSong"
+    [isPlaying]="isPlaying"
+    (onTogglePlay)="togglePlay()"
+  ></app-player>
+</div>

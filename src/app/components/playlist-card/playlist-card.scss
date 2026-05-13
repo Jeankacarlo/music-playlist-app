@@ -1,0 +1,91 @@
+.card {
+  background: #1e1e1e;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-5px);
+    background: #282828;
+
+    .overlay {
+      opacity: 1;
+    }
+  }
+
+  .cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.3s;
+
+      span {
+        font-size: 3rem;
+        color: #1db954;
+      }
+    }
+  }
+
+  .info {
+    padding: 15px;
+
+    h3 {
+      margin: 0 0 5px;
+      color: white;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      margin: 0 0 8px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .songs-count {
+      color: #1db954;
+      font-size: 0.75rem;
+    }
+  }
+
+  .btn-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  &:hover .btn-delete {
+    opacity: 1;
+  }
+}

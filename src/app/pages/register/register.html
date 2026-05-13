@@ -1,0 +1,46 @@
+ <div class="register-container">
+  <div class="register-card">
+    <div class="logo">
+      <h1>🎵 MusicApp</h1>
+      <p>Crea tu cuenta</p>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        placeholder="tucorreo@gmail.com"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="••••••"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Confirmar Contraseña</label>
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        placeholder="••••••"
+      />
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button class="btn-register" (click)="onRegister()">
+      Crear Cuenta
+    </button>
+
+    <p class="login-link">
+      ¿Ya tienes cuenta?
+      <span (click)="goToLogin()">Inicia Sesión</span>
+    </p>
+  </div>
+</div>

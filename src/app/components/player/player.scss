@@ -1,0 +1,91 @@
+.player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #181818;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  z-index: 100;
+
+  .song-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 200px;
+
+    .cover {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .title {
+        color: white;
+        font-size: 0.95rem;
+      }
+
+      .artist {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .controls {
+    .btn-play {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: scale(1.1);
+        background: #1db954;
+        color: white;
+      }
+    }
+  }
+
+  .animation {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 30px;
+
+    .bar {
+      width: 4px;
+      background: #1db954;
+      border-radius: 2px;
+      animation: equalizer 0.8s ease-in-out infinite alternate;
+
+      &:nth-child(1) { animation-delay: 0s; height: 60%; }
+      &:nth-child(2) { animation-delay: 0.1s; height: 100%; }
+      &:nth-child(3) { animation-delay: 0.2s; height: 40%; }
+      &:nth-child(4) { animation-delay: 0.3s; height: 80%; }
+      &:nth-child(5) { animation-delay: 0.4s; height: 60%; }
+    }
+  }
+}
+
+@keyframes equalizer {
+  from { transform: scaleY(0.3); }
+  to { transform: scaleY(1); }
+}

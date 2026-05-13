@@ -1,0 +1,41 @@
+<div class="home-container">
+  <header class="header">
+    <h1>🎵 MusicApp</h1>
+    <div class="user-info">
+      <span>Hola, {{ userName }}</span>
+      <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="section-header">
+      <h2>Mis Playlists</h2>
+      <button class="btn-add" (click)="showForm = !showForm">
+        + Nueva Playlist
+      </button>
+    </div>
+
+    <div class="create-form" *ngIf="showForm">
+      <input
+        type="text"
+        [(ngModel)]="newPlaylistName"
+        placeholder="Nombre de la playlist"
+      />
+      <input
+        type="text"
+        [(ngModel)]="newPlaylistDescription"
+        placeholder="Descripción"
+      />
+      <button (click)="createPlaylist()">Crear</button>
+    </div>
+
+    <div class="playlists-grid">
+      <app-playlist-card
+        *ngFor="let playlist of playlists"
+        [playlist]="playlist"
+        (onOpen)="openPlaylist($event)"
+        (onDelete)="deletePlaylist($event)"
+      ></app-playlist-card>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,29 @@
+<div class="player">
+  <div class="song-info">
+    <img
+      *ngIf="song.coverUrl"
+      [src]="song.coverUrl"
+      [alt]="song.title"
+      class="cover"
+    />
+    <div class="text">
+      <span class="title">{{ song.title }}</span>
+      <span class="artist">{{ song.artist }}</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-play" (click)="togglePlay()">
+      <span *ngIf="!isPlaying">▶️</span>
+      <span *ngIf="isPlaying">⏸️</span>
+    </button>
+  </div>
+
+  <div class="animation" *ngIf="isPlaying">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</div>

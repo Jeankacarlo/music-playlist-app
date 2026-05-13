@@ -1,0 +1,25 @@
+<div class="song-item" [class.playing]="isPlaying" (click)="play()">
+  <div class="song-index">
+    <span class="number" *ngIf="!isPlaying">{{ index }}</span>
+    <span class="bars" *ngIf="isPlaying">🎵</span>
+  </div>
+
+  <div class="song-cover">
+    <img
+      *ngIf="song.coverUrl"
+      [src]="song.coverUrl"
+      [alt]="song.title"
+    />
+    <div class="no-cover" *ngIf="!song.coverUrl">🎵</div>
+  </div>
+
+  <div class="song-info">
+    <span class="title">{{ song.title }}</span>
+    <span class="artist">{{ song.artist }}</span>
+  </div>
+
+  <div class="song-actions">
+    <span class="duration">{{ song.duration }}</span>
+    <button class="btn-delete" (click)="delete($event)">🗑️</button>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="card" (click)="open()">
+  <div class="cover">
+    <img [src]="playlist.coverUrl" [alt]="playlist.name" />
+    <div class="overlay">
+      <span>▶️</span>
+    </div>
+  </div>
+  <div class="info">
+    <h3>{{ playlist.name }}</h3>
+    <p>{{ playlist.description }}</p>
+    <span class="songs-count">{{ playlist.songs.length }} canciones</span>
+  </div>
+  <button class="btn-delete" (click)="delete($event)">🗑️</button>
+</div>
