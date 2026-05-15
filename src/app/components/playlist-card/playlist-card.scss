@@ -6,6 +6,11 @@
   transition: all 0.3s;
   position: relative;
 
+  .card.blocked {
+  opacity: 0.7;
+  border: 1px solid #ff4d4d;
+}
+
   &:hover {
     transform: translateY(-5px);
     background: #282828;

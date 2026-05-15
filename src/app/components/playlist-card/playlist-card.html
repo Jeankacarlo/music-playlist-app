@@ -1,4 +1,4 @@
-<div class="card" (click)="open()">
+<div class="card"  [class.blocked]="playlist.isBlocked" (click)="open()">
   <div class="cover">
     <img [src]="playlist.coverUrl" [alt]="playlist.name" />
     <div class="overlay">
@@ -6,9 +6,14 @@
     </div>
   </div>
   <div class="info">
-    <h3>{{ playlist.name }}</h3>
+    <h3>{{ playlist.name }}
+      <span *ngIf="playlist.isBlocked" class="blocked">🔒</span>
+    </h3>
     <p>{{ playlist.description }}</p>
     <span class="songs-count">{{ playlist.songs.length }} canciones</span>
+    <button (click)="toggleBlock(); $event.stopPropagation()">
+      {{ playlist.isBlocked ? 'Desbloquear' : 'Bloquear' }}
+    </button>
   </div>
-  <button class="btn-delete" (click)="delete($event)">🗑️</button>
+  <button class="btn-delete" (click)="delete($event)" [disabled]="playlist.isBlocked">🗑️</button>
 </div>

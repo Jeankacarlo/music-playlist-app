@@ -15,6 +15,7 @@ export interface Playlist {
   description: string;
   coverUrl: string;
   songs: Song[];
+  isBlocked: boolean;
 }
 
 @Injectable({
@@ -28,14 +29,17 @@ export class PlaylistService {
       name: 'Mis Favoritas',
       description: 'Las mejores canciones',
       coverUrl: 'https://picsum.photos/seed/playlist1/200',
-      songs: []
+      songs: [],
+      isBlocked: false
+
     },
     {
       id: '2',
       name: 'Rock Clásico',
       description: 'Rock de todos los tiempos',
       coverUrl: 'https://picsum.photos/seed/playlist2/200',
-      songs: []
+      songs: [],
+      isBlocked: false
     }
   ];
 
@@ -47,19 +51,36 @@ export class PlaylistService {
     return this.playlists.find(p => p.id === id);
   }
 
+  getActivePlaylists(): Playlist[] {
+    return this.playlists.filter(p => !p.isBlocked);
+  }
+
+  getBlockedPlaylists(): Playlist[] {
+    return this.playlists.filter(p => p.isBlocked);
+  }
+
   createPlaylist(name: string, description: string): void {
     const newPlaylist: Playlist = {
       id: Date.now().toString(),
       name,
       description,
       coverUrl: `https://picsum.photos/seed/${Date.now()}/200`,
-      songs: []
+      songs: [],
+      isBlocked: false
     };
     this.playlists.push(newPlaylist);
   }
 
   deletePlaylist(id: string): void {
     this.playlists = this.playlists.filter(p => p.id !== id);
+  }
+
+  togglePlaylistBlock(id: string): void {
+    const playlist = this.getPlaylistById(id);
+
+    if (playlist) {
+      playlist.isBlocked = !playlist.isBlocked;
+    }
   }
 
   addSong(playlistId: string, song: Omit<Song, 'id'>): void {

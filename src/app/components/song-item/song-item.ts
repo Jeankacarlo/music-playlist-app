@@ -13,16 +13,35 @@ export class SongItemComponent {
   @Input() song!: Song;
   @Input() index!: number;
   @Input() isPlaying = false;
+  @Input() canModify = true;
 
   @Output() onPlay = new EventEmitter<Song>();
   @Output() onDelete = new EventEmitter<string>();
+
+  confirmingDelete = false;
 
   play(): void {
     this.onPlay.emit(this.song);
   }
 
-  delete(event: Event): void {
+  requestDelete(event: Event): void {
+    event.preventDefault();
     event.stopPropagation();
-    this.onDelete.emit(this.song.id);
+    this.confirmingDelete = true;
+  }
+
+  cancelDelete(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmingDelete = false;
+  }
+
+  confirmDelete(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmingDelete = false;
+    if (this.canModify) {
+      this.onDelete.emit(this.song.id);
+    }
   }
 }

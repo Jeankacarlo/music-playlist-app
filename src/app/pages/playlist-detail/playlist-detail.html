@@ -1,3 +1,5 @@
+<div class="delete-message" *ngIf="showDeleteMessage">
+  ✅ Canción eliminada correctamente</div>
 <div class="detail-container">
   <header class="header">
     <button class="btn-back" (click)="goBack()">← Volver</button>
@@ -7,19 +9,23 @@
     <img [src]="playlist.coverUrl" [alt]="playlist.name" />
     <div class="playlist-info">
       <span>PLAYLIST</span>
-      <h1>{{ playlist.name }}</h1>
+      <div class="detail-title-row">
+        <h1>{{ playlist.name }}</h1>
+        <span class="blocked-tag" *ngIf="playlist.isBlocked">🔒 Bloqueada</span>
+      </div>
       <p>{{ playlist.description }}</p>
       <span class="count">{{ playlist.songs.length }} canciones</span>
     </div>
   </div>
 
   <div class="actions">
-    <button class="btn-add" (click)="showForm = !showForm">
+    <button class="btn-add" (click)="showForm = !showForm" [disabled]="playlist?.isBlocked">
       + Agregar Canción
     </button>
+    <span class="readonly-note" *ngIf="playlist?.isBlocked">Esta lista está bloqueada y no se puede modificar.</span>
   </div>
 
-  <div class="add-form" *ngIf="showForm">
+  <div class="add-form" *ngIf="showForm && !playlist?.isBlocked">
     <input
       type="text"
       [(ngModel)]="searchQuery"
@@ -51,6 +57,7 @@
       [song]="song"
       [index]="i + 1"
       [isPlaying]="isPlaying && currentSong?.id === song.id"
+      [canModify]="playlist ? !playlist.isBlocked : false"
       (onPlay)="playSong($event)"
       (onDelete)="deleteSong($event)"
     ></app-song-item>

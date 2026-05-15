@@ -164,7 +164,75 @@
     }
   }
 
+  .actions {
+    padding: 0 40px 20px;
+
+    .btn-add {
+      padding: 10px 25px;
+      background: #1db954;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        background: #17a844;
+        transform: scale(1.05);
+      }
+
+      &:disabled {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.5);
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+
+    .readonly-note {
+      display: block;
+      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.95rem;
+    }
+  }
+
+  .playlist-hero {
+    .playlist-info {
+      .detail-title-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .blocked-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #ff6b6b;
+        background: rgba(255, 77, 77, 0.18);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
   .songs-list {
     padding: 0 40px;
   }
+}
+
+.delete-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #1db954;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }

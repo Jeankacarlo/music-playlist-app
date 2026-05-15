@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +22,11 @@ import { PlayerComponent } from '../../components/player/player';
   templateUrl: './playlist-detail.html',
   styleUrl: './playlist-detail.scss'
 })
-export class PlaylistDetailComponent implements OnInit, OnDestroy {
+export class PlaylistDetailComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() playlistId?: string;
+  @Input() modalMode = false;
+  @Output() onClose = new EventEmitter<void>();
+
   playlist: Playlist | undefined;
   currentSong: Song | null = null;
   isPlaying = false;
@@ -23,6 +36,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
   isSearching = false;
   private audio = new Audio();
   private searchTimeout: any;
+  showDeleteMessage = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,10 +45,25 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    if (this.playlistId) {
+      this.loadPlaylist(this.playlistId);
+      return;
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.playlist = this.playlistService.getPlaylistById(id);
+      this.loadPlaylist(id);
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['playlistId'] && this.playlistId) {
+      this.loadPlaylist(this.playlistId);
+    }
+  }
+
+  private loadPlaylist(id: string): void {
+    this.playlist = this.playlistService.getPlaylistById(id);
   }
 
   ngOnDestroy(): void {
@@ -69,7 +98,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
   }
 
   addSongFromSearch(result: any): void {
-    if (this.playlist) {
+    if (this.playlist && !this.playlist.isBlocked) {
       const song = {
         title: result.title,
         artist: result.artist.name,
@@ -78,7 +107,7 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
         coverUrl: result.album.cover_small
       };
       this.playlistService.addSong(this.playlist.id, song);
-      this.playlist = this.playlistService.getPlaylistById(this.playlist.id);
+      this.loadPlaylist(this.playlist.id);
       this.searchQuery = '';
       this.searchResults = [];
       this.showForm = false;
@@ -89,27 +118,42 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
     if (this.currentSong?.id === song.id) {
       this.isPlaying = !this.isPlaying;
       if (this.isPlaying) {
-        this.audio.play();
+        this.audio.play().catch(err => {
+          console.error('[PlaylistDetail] audio play failed', err);
+          this.isPlaying = false;
+        });
       } else {
         this.audio.pause();
       }
+      return;
+    }
+
+    this.audio.pause();
+    this.audio.currentTime = 0;
+    this.currentSong = song;
+
+    if (song.audioUrl) {
+      this.audio.src = song.audioUrl;
+      this.audio.load();
+      this.audio.play().then(() => {
+        this.isPlaying = true;
+      }).catch(err => {
+        console.error('[PlaylistDetail] audio play failed', err);
+        this.isPlaying = false;
+      });
     } else {
-      this.audio.pause();
-      this.currentSong = song;
-      if (song.audioUrl) {
-        this.audio.src = song.audioUrl;
-        this.audio.play();
-        this.isPlaying = true;
-      } else {
-        this.isPlaying = true;
-      }
+      this.isPlaying = true;
     }
   }
 
   deleteSong(songId: string): void {
-    if (this.playlist) {
+    if (this.playlist && !this.playlist.isBlocked) {
       this.playlistService.deleteSong(this.playlist.id, songId);
-      this.playlist = this.playlistService.getPlaylistById(this.playlist.id);
+      this.loadPlaylist(this.playlist.id);
+      this.showDeleteMessage = true;
+      setTimeout(() => {
+        this.showDeleteMessage = false;
+      }, 3000);
       if (this.currentSong?.id === songId) {
         this.audio.pause();
         this.currentSong = null;
@@ -119,13 +163,24 @@ export class PlaylistDetailComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/home']);
+    if (this.modalMode) {
+      this.onClose.emit();
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
   togglePlay(): void {
+    if (!this.currentSong) {
+      return;
+    }
+
     this.isPlaying = !this.isPlaying;
     if (this.isPlaying) {
-      this.audio.play();
+      this.audio.play().catch(err => {
+        console.error('[PlaylistDetail] audio play failed', err);
+        this.isPlaying = false;
+      });
     } else {
       this.audio.pause();
     }

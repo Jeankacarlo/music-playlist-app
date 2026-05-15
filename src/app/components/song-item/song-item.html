@@ -20,6 +20,15 @@
 
   <div class="song-actions">
     <span class="duration">{{ song.duration }}</span>
-    <button class="btn-delete" (click)="delete($event)">🗑️</button>
+
+    <ng-container *ngIf="!confirmingDelete">
+      <button type="button" class="btn-delete" *ngIf="canModify" (click)="requestDelete($event)">Eliminar canción</button>
+    </ng-container>
+
+    <div class="delete-confirmation" *ngIf="confirmingDelete" (click)="$event.stopPropagation()">
+      <span>¿Eliminar esta canción?</span>
+      <button type="button" class="btn-confirm" (click)="confirmDelete($event)">Sí</button>
+      <button type="button" class="btn-cancel" (click)="cancelDelete($event)">No</button>
+    </div>
   </div>
 </div>

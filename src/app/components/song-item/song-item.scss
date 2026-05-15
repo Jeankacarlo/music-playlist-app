@@ -77,26 +77,54 @@
 
   .song-actions {
     position: relative;
-    width: 60px;
-    text-align: right;
+    width: auto;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
 
     .duration {
       color: rgba(255, 255, 255, 0.5);
       font-size: 0.85rem;
       transition: all 0.2s;
+      opacity: 1;
     }
 
-    .btn-delete {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
+    .btn-delete,
+    .btn-confirm,
+    .btn-cancel {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
       cursor: pointer;
-      font-size: 1rem;
-      opacity: 0;
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      opacity: 1;
       transition: all 0.2s;
+    }
+
+    .btn-delete:hover,
+    .btn-confirm:hover,
+    .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .delete-confirmation {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .delete-confirmation span {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.85);
     }
   }
 }

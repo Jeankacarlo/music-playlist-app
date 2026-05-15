@@ -1,41 +1,156 @@
 <div class="home-container">
-  <header class="header">
-    <h1>🎵 MusicApp</h1>
-    <div class="user-info">
-      <span>Hola, {{ userName }}</span>
-      <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🎧</div>
+      <div>
+        <h1>MusicApp</h1>
+        <span>Listas y búsqueda</span>
+      </div>
     </div>
-  </header>
 
-  <main class="main-content">
-    <div class="section-header">
-      <h2>Mis Playlists</h2>
-      <button class="btn-add" (click)="showForm = !showForm">
-        + Nueva Playlist
+    <nav class="side-nav">
+      <button
+        class="nav-item"
+        [class.active]="selectedView === 'playlists'"
+        (click)="selectedView = 'playlists'"
+      >
+        Listas de reproducción
       </button>
+      <button
+        class="nav-item"
+        [class.active]="selectedView === 'search'"
+        (click)="selectedView = 'search'"
+      >
+        Buscador de canciones
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar">{{ getUserInitials() }}</div>
+      <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="content-area">
+    <div class="page-header">
+      <div>
+        <h2>{{ selectedView === 'playlists' ? 'Listas de reproducción' : 'Buscador de canciones' }}</h2>
+        <p class="subtitle" *ngIf="selectedView === 'playlists'">
+          Administra tus playlists activas y bloqueadas desde un solo lugar.
+        </p>
+        <p class="subtitle" *ngIf="selectedView === 'search'">
+          Busca canciones y agrégalas a tu playlist favorita.
+        </p>
+      </div>
+      <button class="btn-add" *ngIf="selectedView === 'playlists'" (click)="showCreateModal = true">+ Nueva Playlist</button>
     </div>
 
-    <div class="create-form" *ngIf="showForm">
+    <section class="view-panel" *ngIf="selectedView === 'playlists'">
+      <div class="section-title">Listas activas</div>
+      <div class="playlists-grid">
+        <app-playlist-card
+          *ngFor="let playlist of activePlaylists"
+          [playlist]="playlist"
+          (onOpen)="openPlaylist($event)"
+          (onDelete)="deletePlaylist($event)"
+          (onToggleBlock)="refreshPlaylists()"
+        ></app-playlist-card>
+        <p class="empty-state" *ngIf="activePlaylists.length === 0">No hay playlists activas.</p>
+      </div>
+
+      <div class="section-title blocked-title" *ngIf="blockedPlaylists.length > 0">
+        Listas bloqueadas
+        <span class="blocked-label">Solo lectura</span>
+      </div>
+      <div class="playlists-grid" *ngIf="blockedPlaylists.length > 0">
+        <app-playlist-card
+          *ngFor="let playlist of blockedPlaylists"
+          [playlist]="playlist"
+          (onOpen)="openPlaylist($event)"
+          (onDelete)="deletePlaylist($event)"
+          (onToggleBlock)="refreshPlaylists()"
+        ></app-playlist-card>
+      </div>
+    </section>
+
+    <section class="view-panel" *ngIf="selectedView === 'search'">
+      <div class="search-bar">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Buscar canción o artista..."
+          (input)="searchSongs()"
+        />
+      </div>
+
+      <div class="search-meta">
+        <div class="playlist-picker">
+          <span>Agregar a playlist</span>
+          <select [(ngModel)]="selectedPlaylistToAddId">
+            <option *ngFor="let playlist of activePlaylists" [value]="playlist.id">
+              {{ playlist.name }}
+            </option>
+          </select>
+        </div>
+        <div class="search-note">
+          <span *ngIf="!activePlaylists.length">Crea una playlist para poder agregar canciones.</span>
+          <span class="success" *ngIf="showAddMessage">Canción agregada correctamente.</span>
+        </div>
+      </div>
+
+      <div class="search-results" *ngIf="searchResults.length > 0">
+        <div class="search-item" *ngFor="let result of searchResults">
+          <div class="result-info">
+            <span class="result-title">{{ result.title }}</span>
+            <span class="result-artist">{{ result.artist.name }}</span>
+          </div>
+          <button
+            class="btn-add"
+            type="button"
+            [disabled]="!selectedPlaylistToAddId"
+            (click)="addSongToPlaylist(result)"
+          >
+            Agregar
+          </button>
+        </div>
+      </div>
+
+      <p class="empty-state" *ngIf="!searchResults.length && searchQuery.length >= 2 && !isSearching">
+        No se encontraron resultados.
+      </p>
+      <p class="empty-state" *ngIf="isSearching">Buscando...</p>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" *ngIf="showCreateModal">
+    <div class="modal-card">
+      <button class="close-modal" (click)="showCreateModal = false">×</button>
+      <h3>Crear nueva playlist</h3>
       <input
         type="text"
         [(ngModel)]="newPlaylistName"
         placeholder="Nombre de la playlist"
       />
-      <input
-        type="text"
+      <textarea
+        rows="4"
         [(ngModel)]="newPlaylistDescription"
         placeholder="Descripción"
-      />
-      <button (click)="createPlaylist()">Crear</button>
+      ></textarea>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showCreateModal = false">Cancelar</button>
+        <button class="btn-primary" (click)="createPlaylist()">Crear</button>
+      </div>
     </div>
+  </div>
 
-    <div class="playlists-grid">
-      <app-playlist-card
-        *ngFor="let playlist of playlists"
-        [playlist]="playlist"
-        (onOpen)="openPlaylist($event)"
-        (onDelete)="deletePlaylist($event)"
-      ></app-playlist-card>
+  <div class="modal-backdrop" *ngIf="showDetailModal && selectedPlaylist">
+    <div class="modal-card modal-detail">
+      <button class="close-modal" (click)="closeDetail()">×</button>
+      <app-playlist-detail
+        [playlistId]="selectedPlaylist.id"
+        [modalMode]="true"
+        (onClose)="closeDetail()"
+      ></app-playlist-detail>
     </div>
-  </main>
+  </div>
 </div>
